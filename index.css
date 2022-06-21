@@ -10,6 +10,9 @@ li{
   list-style-position: unset;
   margin: 0 0 3px 0;
 }
+li span {
+  font-weight: bolder;
+}
 img {
   width: 400px;
   display: block;
@@ -34,8 +37,10 @@ section {
   padding: 10px;
   border-radius: 10px;
   box-shadow: -5px 5px 5px #CCC;
+  align-self: start;
 }
 .areas{
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-evenly;
 }
