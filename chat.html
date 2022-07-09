@@ -1,1 +1,155 @@
-/home/russell/MyDropbox/zProjects/20190803Dominion/chat.html
+<html>
+	<head>
+		<meta charset="UTF-8"> 
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.6-rc.2/peerjs.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<title>Video Chat killed the Radio Star</title>
+		<style type="text/css">
+			* { margin: 0; padding: 0;}
+			section { display: inline-block; }
+		</style>
+		<script type="text/javascript">
+		
+		// Show debug when local
+		if(window.document.URL.includes("localhost"))
+			console.log = function(s) { logger.innerHTML += `<p>${s}</p>`; };
+		// Override the normal PeerJS broker when it is down.
+		var PeerJSConfig = {
+		    xhost: "192.168.0.1",
+    		xport: 9000,
+    		debug: 2
+		};
+
+		// Kill connections when you leave. Doesn't really send events though.
+		window.onbeforeunload = function(){
+			if(clientConnection)
+				clientConnection.destroy();
+			if(host)
+				host.destroy();
+		}
+
+		$(document).ready(function(){
+			$.getJSON('http://ip-api.com/json', function(data) {
+  				mainName = data.query.replaceAll(".","X"); // Limit connections to same ip address
+				setupLocal();
+				setupHost();
+			});
+		});
+		
+		var host = null;
+		var client = null;
+		var clientConnection = null;
+		var mainName = "NoIpAddress";
+		
+		function connectToHost(){
+			console.log("Connecting to host")
+			client = new Peer(null, PeerJSConfig);
+			client.on('error', function(err){
+				console.log(err);
+			});
+			client.on('open', function(){
+				console.log('Connected as Peer ' + client.id);
+				callHost();
+				
+			});
+			client.on('connection', function(){
+				console.log(`Connection was made to the client?`);
+			});
+		}
+		
+		function callHost(){
+			console.log("Calling host");
+			if(!host && client && window.localStream){
+				clientConnection = client.call("TestHost" + mainName, window.localStream);
+				clientConnection.on('stream', function(stream){
+					console.log(`Called host, receiving stream from remote ${stream.id}`);
+					document.getElementById('peer-camera').srcObject = stream;
+				});
+			}
+		}
+		
+		function setupLocal(){
+
+			// Monkeypatch for crossbrowser geusermedia
+			navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+			
+			// Request audio an video
+			navigator.getUserMedia(
+				{ audio: true, video: true }, 
+				//{ audio: true, video: {facingMode: "user"} },
+				function(stream){
+					window.localStream = stream;
+					document.getElementById('my-camera').srcObject = stream;
+					//callHost();
+				}, function(err){
+					console.error(err);
+				});
+
+		}
+		function setupHost(){
+			/* */
+			host = new Peer("TestHost" + mainName, PeerJSConfig);
+			host.on('error', function(err){
+				if(err.type == 'unavailable-id'){
+					connectToHost();
+					host = null;
+				}
+				else {
+					console.log(err);
+				}
+			});
+			host.on('open', function(){
+				console.log(`You are the host "${host.id}"`);
+
+				// Only have the close function if we are the host
+				lostClient = function(){
+					console.log("Closing the client");
+					if(clientConnection)
+						clientConnection.destroy();
+					clientConnection = null;
+				};
+				host.on('close', lostClient);
+				host.on('disconnected', lostClient);
+			});
+			
+			host.on('call', function(call){
+				console.log(`Call received from ${call.peer}`)
+				call.answer(window.localStream);
+				call.on('stream', function(stream){
+					console.log(`Stream received ${stream.id}`);
+					document.getElementById('peer-camera').srcObject = stream;
+				});
+				call.on('close', function(){
+					console.log(`Closing the client from ${call.peer}`);
+					if(clientConnection)
+						clientConnection.close();
+					clientConnection = null;
+				});
+				call.on('error', function(err){
+					console.log(err);
+				})
+				
+				if(clientConnection == null){
+					clientConnection = call;
+				}
+				else{
+					console.log("Extra connection?");
+					call.close();
+				}
+			});
+			// */
+		}
+		</script>
+	</head>
+	<body>
+		<div id="logger"></div>
+		<section>
+		<div>You</div>
+		<video id="my-camera"  width="320" height="240" autoplay="autoplay" muted="true"></video>
+		</section>
+		<section>
+		<div>Other</div>
+		<video id="peer-camera" width="320" height="240" autoplay="autoplay"></video>
+		</section>
+	</body>
+</html>
