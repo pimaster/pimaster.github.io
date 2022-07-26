@@ -6,6 +6,9 @@ body {
   font-family: Verdana, sans;
   overflow-y: scroll;
 }
+.hidden {
+  display: none;
+}
 li{
   list-style: none;
   list-style-position: unset;
