@@ -4,6 +4,7 @@ p, ul, li, h1, h2, h3, h4{
 }
 body {
   font-family: Verdana, sans;
+  overflow-y: scroll;
 }
 li{
   list-style: none;
@@ -16,6 +17,14 @@ li span {
 img {
   width: 400px;
   display: block;
+  transition: transform .2s ease-in-out;
+  transform-origin: center top;
+}
+
+img.blowsup:hover {
+  transform: scale(2.8);
+  box-shadow: -5px 5px 5px #CCC;
+  margin: 0 0 10px 0;
 }
 
 h1, h2, h3, h4{
