@@ -44,7 +44,7 @@ h2{
 }
 section {
   width: 25em;
-  margin: 5px;
+  margin: 5px 5px 15px;
   background-color: #EFEFEF;
   padding: 10px;
   border-radius: 10px;
@@ -55,4 +55,10 @@ section {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
+}
+.youtubeCrop{
+  overflow: hidden;
+}
+.youtubeCrop img{
+  margin: -40px 0;
 }
