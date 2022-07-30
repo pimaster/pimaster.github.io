@@ -11,7 +11,7 @@
 		<script type="text/javascript">
 		
 		// Show debug when local
-		//if(window.document.URL.includes("localhost"))
+		if(window.document.URL.includes("localhost"))
 			console.log = function(s) { logger.innerHTML += `<p>${s}</p>`; };
 		// Override the normal PeerJS broker when it is down.
 		var PeerJSConfig = {
@@ -38,13 +38,16 @@
   				mainName = obj.ip.replaceAll(".","X"); // Limit connections to same ip address
 				setupLocal();
 				setupHost();
+			}).fail(function(result){
+				setupLocal();
+				setupHost();
 			});
 		});
 		
 		var host = null;
 		var client = null;
 		var clientConnection = null;
-		var mainName = "NoIpAddress";
+		var mainName = "Global";
 		
 		function connectToHost(){
 			console.log("Connecting to host")
