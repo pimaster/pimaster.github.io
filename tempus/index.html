@@ -1,0 +1,54 @@
+<html>
+<head>
+	<script type="text/javascript" src="qrcode.js"></script>
+	<style>
+	#target{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+		padding: 0;
+		margin: 0;
+}
+	</style>
+</head>
+<body>
+<div id="target"></div>
+<script type="text/javascript">
+function getTOD(d){
+	var hours = d.getHours();
+	var minutes = d.getMinutes();
+	var ampm = hours >= 12 ? 'pm' : 'am';
+	hours = hours % 12;
+	hours = hours ? hours : 12; // the hour '0' should be '12'
+	minutes = minutes < 10 ? '0'+minutes : minutes;
+	return `${hours}:${minutes} ${ampm}`;
+}
+var d = new Date();
+var qrcode = null;
+function doWait(){
+	setTimeout(showQR,(61-d.getSeconds())*1000);
+}
+function showQR(){
+	d = new Date(); // reset for each display
+	var text = "The time is " + getTOD(d);
+	if(qrcode){
+		qrcode.clear();
+		qrcode.makeCode(text);
+	}else{
+		qrcode = new QRCode("target", {
+		    text: text,
+		    width: 512,
+		    height: 512,
+		    colorDark : "#000000",
+		    colorLight : "#ffffff",
+		    correctLevel : QRCode.CorrectLevel.L
+		});
+	}
+	setTimeout(doWait,1);
+}
+showQR();
+</script>
+
+</body>
+</html>
