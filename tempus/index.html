@@ -21,7 +21,7 @@ function doWait(){
 function showQR(){
 	d = new Date(); // reset for each display
 	var text = "The time is " + getTOD(d);
-	var colourSource = d.getMinutes;
+	var colourSource = d.getMinutes();
 	//colourSource = window.counter ? window.counter++ : window.counter = 1; // for testing
 	var colour = Math.sin(colourSource % 20 / 20 * Math.PI) * 32 | 0;
 	var hex = colour.toString(16);
