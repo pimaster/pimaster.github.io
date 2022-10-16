@@ -1,20 +1,7 @@
 <html>
 <head>
 	<script type="text/javascript" src="qrcode.js"></script>
-	<style>
-	#target{
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		height: 100%;
-		padding: 0;
-		margin: 0;
-}
-	</style>
-</head>
-<body>
-<div id="target"></div>
-<script type="text/javascript">
+	<script type="text/javascript">
 function getTOD(d){
 	var hours = d.getHours();
 	var minutes = d.getMinutes();
@@ -27,12 +14,22 @@ function getTOD(d){
 var d = new Date();
 var qrcode = null;
 function doWait(){
-	setTimeout(showQR,(61-d.getSeconds())*1000);
+	var delays = 61;
+	//delays = 2; // for testing
+	setTimeout(showQR,(delays-(d.getSeconds()%delays))*1000);
 }
 function showQR(){
 	d = new Date(); // reset for each display
 	var text = "The time is " + getTOD(d);
+	var colourSource = d.getMinutes;
+	//colourSource = window.counter ? window.counter++ : window.counter = 1; // for testing
+	var colour = Math.sin(colourSource % 20 / 20 * Math.PI) * 32 | 0;
+	var hex = colour.toString(16);
+	if(hex.length < 2)
+		hex = `0${hex}`;
+	hex = `#${hex}${hex}${hex}`;
 	if(qrcode){
+		qrcode._htOption.colorDark = hex;
 		qrcode.clear();
 		qrcode.makeCode(text);
 	}else{
@@ -40,15 +37,29 @@ function showQR(){
 		    text: text,
 		    width: 512,
 		    height: 512,
-		    colorDark : "#000000",
+		    colorDark : hex,
 		    colorLight : "#ffffff",
 		    correctLevel : QRCode.CorrectLevel.L
 		});
 	}
 	setTimeout(doWait,1);
 }
-showQR();
+	</script>
+	<style>
+#target{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+}
+	</style>
+</head>
+<body>
+<div id="target"></div>
+<script type="text/javascript">
+	showQR();
 </script>
-
 </body>
 </html>
