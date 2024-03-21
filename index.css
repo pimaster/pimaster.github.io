@@ -25,7 +25,7 @@ img {
 }
 
 img.blowsup:hover {
-  transform: scale(2.8);
+  transform: scale(1.2);
   box-shadow: -5px 5px 5px #CCC;
   margin: 0 0 10px 0;
 }
@@ -42,8 +42,10 @@ h2{
   background-color: #CCC;
   margin: 10px;
 }
+.col {
+  width: 33%;
+}
 section {
-  width: 25em;
   margin: 5px 5px 15px;
   background-color: #EFEFEF;
   padding: 10px;
