@@ -79,10 +79,14 @@
 		function setupLocal(){
 
 			// Monkeypatch for crossbrowser geusermedia
-			getUserMedia = navigator.getUserMedia || 
-					navigator.mediaDevices.getUserMedia || 
-					navigator.webkitGetUserMedia || 
-					navigator.mozGetUserMedia;
+			getUserMedia = navigator.getUserMedia
+			if(!getUserMedia)
+				if(navigator.mediaDevices)
+					getUserMedia = navigator.mediaDevices.getUserMedia
+			if(!getUserMedia)
+				getUserMedia = navigator.webkitGetUserMedia
+			if(!getUserMedia)
+				getUserMedia = navigator.mozGetUserMedia
 			
 			// Request audio an video
 			getUserMedia(
