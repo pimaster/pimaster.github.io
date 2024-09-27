@@ -3,6 +3,7 @@
 		<meta charset="UTF-8"> 
 		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.6-rc.2/peerjs.min.js"></script> -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 		<title>Video Chat killed the Radio Star</title>
 		<style type="text/css">
 			* { margin: 0; padding: 0;}
@@ -80,28 +81,20 @@
 		}
 		
 		function setupLocal(){
-
-			// Monkeypatch for crossbrowser geusermedia
-			getUserMedia = navigator.getUserMedia
-			if(!getUserMedia)
-				if(navigator.mediaDevices)
-					getUserMedia = navigator.mediaDevices.getUserMedia
-			if(!getUserMedia)
-				getUserMedia = navigator.webkitGetUserMedia
-			if(!getUserMedia)
-				getUserMedia = navigator.mozGetUserMedia
 			
 			// Request audio an video
-			getUserMedia(
-				{ audio: true, video: true }, 
-				//{ audio: true, video: {facingMode: "user"} },
-				function(stream){
-					window.localStream = stream;
-					document.getElementById('my-camera').srcObject = stream;
-					//callHost();
-				}, function(err){
-					console.error(err);
-				});
+			navigator.mediaDevices.getUserMedia(
+				{ audio: true, video: true }
+				//{ audio: true, video: {facingMode: "user"} }
+				)
+			.then(stream => {
+				window.localStream = stream;
+				document.getElementById('my-camera').srcObject = stream;
+				//callHost();
+				})
+			.catch(err =>{
+				console.error(err);
+				})
 
 		}
 		function setupHost(){
