@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"> 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.6-rc.2/peerjs.min.js"></script>
+		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.6-rc.2/peerjs.min.js"></script> -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<title>Video Chat killed the Radio Star</title>
 		<style type="text/css">
@@ -27,8 +27,11 @@
 			if(host)
 				host.destroy();
 		}
-
+		
 		$(document).ready(function(){
+			setupLocal();
+			setupHost();
+			return // Ignore the cool features
 			$.get('https://www.cloudflare.com/cdn-cgi/trace', function(data) {
 				obj = {};
 				data.split('\n').forEach(function(v){
@@ -160,11 +163,11 @@
 		<div id="logger"></div>
 		<section>
 		<div>You</div>
-		<video id="my-camera"  width="320" height="240" autoplay="autoplay" muted="true"></video>
+		<video id="my-camera"  width="320" height="240" autoplay="autoplay" muted="true" playsinline=""></video>
 		</section>
 		<section>
 		<div>Other</div>
-		<video id="peer-camera" width="320" height="240" autoplay="autoplay"></video>
+		<video id="peer-camera" width="320" height="240" autoplay="autoplay" playsinline=""></video>
 		</section>
 	</body>
 </html>
