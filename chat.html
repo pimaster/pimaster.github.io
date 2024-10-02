@@ -1,14 +1,58 @@
 <html>
 	<head>
-		<!-- test -->
 		<meta charset="UTF-8"> 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.6-rc.2/peerjs.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 		<title>Video Chat killed the Radio Star</title>
 		<style type="text/css">
+			body{
+				max-width: fit-content;
+				margin-left: auto;
+				margin-right: auto;
+			}
 			* { margin: 0; padding: 0;}
-			section { display: inline-block; }
+			section { 
+			}
+			section div {
+				display: none;
+			}
+			#Streams{
+				position: relative;
+				display: inline-block;
+				vertical-align: bottom;
+			}
+			#SectionMe{
+				bottom: 0;
+				right:0;
+				position: absolute;
+			}
+			#SectionYou{
+			}
+			video { border: 1px solid black; }
+			#CameraPeer{
+				width: 90vw;
+				min-width: 200px;
+				max-width: 640px;
+				max-height: 80vh;
+				aspect-ratio: 4/3;
+			}
+			#CameraMe{
+				width:30vw;
+				min-width: 50px;
+				max-width: 150px;
+				aspect-ratio: 4/3;
+			}
+			#CallDisconnect{
+				text-decoration: none;
+				font-size: 600%;
+			}
+			#CallDisconnect:after{
+				content: "⛔";
+			}
+			#CallDisconnect span{
+				display: none;
+			}
 		</style>
 		<script type="text/javascript">
 		
@@ -53,6 +97,18 @@
 		var client = null;
 		var clientConnection = null;
 		var mainName = "Global";
+
+		function disconnect(){
+			if(host){
+				host.destroy()
+				host = null
+			}
+			if(client){
+				client.destroy()
+				client = null
+			}
+			window.localStream.getTracks().forEach(t => t.stop())
+		}
 		
 		function connectToHost(){
 			console.log("Connecting to host")
@@ -76,7 +132,7 @@
 				clientConnection = client.call("TestHost" + mainName, window.localStream);
 				clientConnection.on('stream', function(stream){
 					console.log(`Called host, receiving stream from remote ${stream.id}`);
-					document.getElementById('peer-camera').srcObject = stream;
+					CameraPeer.srcObject = stream;
 				});
 			}
 		}
@@ -90,7 +146,7 @@
 				)
 			.then(stream => {
 				window.localStream = stream;
-				document.getElementById('my-camera').srcObject = stream;
+				CameraMe.srcObject = stream;
 				//callHost();
 				})
 			.catch(err =>{
@@ -129,7 +185,7 @@
 				call.answer(window.localStream);
 				call.on('stream', function(stream){
 					console.log(`Stream received ${stream.id}`);
-					document.getElementById('peer-camera').srcObject = stream;
+					CameraPeer.srcObject = stream;
 				});
 				call.on('close', function(){
 					console.log(`Closing the client from ${call.peer}`);
@@ -155,13 +211,16 @@
 	</head>
 	<body>
 		<div id="logger"></div>
-		<section>
-		<div>You</div>
-		<video id="my-camera"  width="320" height="240" autoplay="autoplay" muted="true" playsinline=""></video>
-		</section>
-		<section>
-		<div>Other</div>
-		<video id="peer-camera" width="320" height="240" autoplay="autoplay" playsinline=""></video>
-		</section>
+		<div id="Streams">
+			<section id="SectionMe">
+				<div>You</div>
+				<video id="CameraMe"  autoplay="autoplay" muted="true" playsinline=""></video>
+			</section>
+			<section id="SectionYou">
+				<div>Other</div>
+				<video id="CameraPeer" autoplay="autoplay" playsinline=""></video>
+			</section>
+		</div>
+		<a id="CallDisconnect" href="#" onclick="return disconnect()"><span>Disconnect</span></a>
 	</body>
 </html>
