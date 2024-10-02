@@ -29,19 +29,20 @@
 			}
 			#SectionYou{
 			}
-			video { border: 1px solid black; }
+			video { 
+				border: 1px solid black; 
+				aspect-ratio: 4/3;
+			}
 			#CameraPeer{
 				width: 90vw;
 				min-width: 200px;
 				max-width: 640px;
 				max-height: 80vh;
-				aspect-ratio: 4/3;
 			}
 			#CameraMe{
 				width:30vw;
 				min-width: 50px;
 				max-width: 150px;
-				aspect-ratio: 4/3;
 			}
 			#CallDisconnect{
 				text-decoration: none;
@@ -52,6 +53,16 @@
 			}
 			#CallDisconnect span{
 				display: none;
+			}
+			@media screen and (orientation:portrait) {
+				video {
+					aspect-ratio: 9/16;
+					border-color: red;
+				}
+				#CallDisconnect {
+					display: block;
+					text-align: right;
+				}
 			}
 		</style>
 		<script type="text/javascript">
@@ -68,10 +79,7 @@
 
 		// Kill connections when you leave. Doesn't really send events though.
 		window.onbeforeunload = function(){
-			if(clientConnection)
-				clientConnection.destroy();
-			if(host)
-				host.destroy();
+			disconnect()
 		}
 		
 		$(document).ready(function(){
