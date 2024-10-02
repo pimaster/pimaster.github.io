@@ -189,10 +189,11 @@
 					CameraPeer.srcObject = stream;
 				});
 				call.on('close', function(){
-					console.log(`Closing the client from ${call.peer}`);
+					console.log(`Closing the client from ${call.peer}`)
 					if(clientConnection)
-						clientConnection.close();
-					clientConnection = null;
+						clientConnection.close()
+					disconnect()
+					clientConnection = null
 				});
 				call.on('error', function(err){
 					console.log(err);
