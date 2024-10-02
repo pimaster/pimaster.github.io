@@ -134,6 +134,7 @@
 					console.log(`Called host, receiving stream from remote ${stream.id}`);
 					CameraPeer.srcObject = stream;
 				});
+				clientConnection.on('close', disconnect)
 			}
 		}
 		
@@ -173,7 +174,7 @@
 				lostClient = function(){
 					console.log("Closing the client");
 					if(clientConnection)
-						clientConnection.destroy();
+						clientConnection.close();
 					clientConnection = null;
 				};
 				host.on('close', lostClient);
